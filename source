@@ -32,7 +32,7 @@ end
 LPH_JIT_MAX = LPH_NO_VIRTUALIZE
 
 local devMode = true
-local defaultUIName = "NoName.gg" -- $$$
+local defaultUIName = "Noname.gg" -- $$$
 local folderName = "Phantom Forces Cheat"
 local connectionList = {}
 local callbackList = {}
@@ -1145,14 +1145,13 @@ do -- UI Library
     wapus = {
         toggleKeybind = "RightShift",
         theme = {
-            accent = Color3.fromRGB(127, 72, 163), -- Color3.fromRGB(23, 122, 179)
-            text = Color3.fromRGB(255, 255, 255),
-            background = Color3.fromRGB(35, 35, 35),
-            lightbackground = Color3.fromRGB(50, 50, 50),
-            hidden = Color3.fromRGB(26, 26, 26),
-            hiddenText = Color3.fromRGB(200, 200, 200),
-            outline = Color3.fromRGB(0, 0, 0),
-            --fontData = game:HttpGet("https://get.fontspace.co/download/font/g0P4/YzVlMTg1YTgwOGNhNGQyYjljZDFiNmI0NjMxNGY0YzgudHRm/EpilepsySans-g0P4.ttf") -- miss krampus
+            accent = Color3.fromRGB(23, 122, 179),
+            text = Color3.fromRGB(235, 245, 255),
+            background = Color3.fromRGB(28, 33, 48),
+            lightbackground = Color3.fromRGB(44, 54, 74),
+            hidden = Color3.fromRGB(18, 20, 28),
+            hiddenText = Color3.fromRGB(180, 190, 205),
+            outline = Color3.fromRGB(6, 10, 18),
         },
         menus = {},
         useCustomFont = false,
@@ -5014,7 +5013,14 @@ LPH_JIT_MAX(function() -- Main Cheat
             chams = false,
             chamsVisibleOnly = false,
             chamsFillColor = { Color3.new(0.2, 0.2, 0.2), 0.5 },
+            chamsFillColorVisible = { Color3.new(0,0,1), 0.5 },
+            chamsFillColorOccluded = { Color3.new(0,1,0), 0.25 },
+            chamsFillMaterial = Enum.Material.ForceField,
             chamsOutlineColor = { Color3.new(1,0,0), 0 },
+            chamsOutlineColorVisible = { Color3.new(0,0,0), 0 },
+            chamsOutlineColorOccluded = { Color3.new(0,0,0), 0 },
+            chamsOutlineMaterial = Enum.Material.ForceField,
+            chamsMaterial = Enum.Material.ForceField,
         },
         friendly = {
             enabled = false,
@@ -5061,7 +5067,14 @@ LPH_JIT_MAX(function() -- Main Cheat
             chams = false,
             chamsVisibleOnly = false,
             chamsFillColor = { Color3.new(0.2, 0.2, 0.2), 0.5 },
-            chamsOutlineColor = { Color3.new(0,1,0), 0 }
+            chamsFillColorVisible = { Color3.new(0,1,0), 0.5 },
+            chamsFillColorOccluded = { Color3.new(0,0,1), 0.25 },
+            chamsFillMaterial = Enum.Material.ForceField,
+            chamsOutlineColor = { Color3.new(0,1,0), 0 },
+            chamsOutlineColorVisible = { Color3.new(0,0,0), 0 },
+            chamsOutlineColorOccluded = { Color3.new(0,0,0), 0 },
+            chamsOutlineMaterial = Enum.Material.ForceField,
+            chamsMaterial = Enum.Material.ForceField
         }
     }
 
@@ -5230,19 +5243,64 @@ LPH_JIT_MAX(function() -- Main Cheat
     end
 
     callbackList["Enemy ESP%%Highlight Outline Color"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorVisible[1] = state
         espInterface.teamSettings.enemy.chamsOutlineColor[1] = state
     end
 
     callbackList["Enemy ESP%%Highlight Outline Opacity"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorVisible[2] = state * 0.01
         espInterface.teamSettings.enemy.chamsOutlineColor[2] = state * 0.01
     end
 
     callbackList["Enemy ESP%%Highlight Fill Color"] = function(state)
-        espInterface.teamSettings.enemy.chamsOutlineColor[1] = state
+        espInterface.teamSettings.enemy.chamsFillColorVisible[1] = state
+        espInterface.teamSettings.enemy.chamsFillColor[1] = state
     end
 
     callbackList["Enemy ESP%%Highlight Fill Opacity"] = function(state)
-        espInterface.teamSettings.enemy.chamsOutlineColor[2] = state * 0.01
+        espInterface.teamSettings.enemy.chamsFillColorVisible[2] = state * 0.01
+        espInterface.teamSettings.enemy.chamsFillColor[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Visible Fill Color"] = function(state)
+        espInterface.teamSettings.enemy.chamsFillColorVisible[1] = state
+    end
+
+    callbackList["Enemy ESP%%Highlight Visible Fill Opacity"] = function(state)
+        espInterface.teamSettings.enemy.chamsFillColorVisible[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Visible Outline Color"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorVisible[1] = state
+    end
+
+    callbackList["Enemy ESP%%Highlight Visible Outline Opacity"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorVisible[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Occluded Fill Color"] = function(state)
+        espInterface.teamSettings.enemy.chamsFillColorOccluded[1] = state
+    end
+
+    callbackList["Enemy ESP%%Highlight Occluded Fill Opacity"] = function(state)
+        espInterface.teamSettings.enemy.chamsFillColorOccluded[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Occluded Outline Color"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorOccluded[1] = state
+    end
+
+    callbackList["Enemy ESP%%Highlight Occluded Outline Opacity"] = function(state)
+        espInterface.teamSettings.enemy.chamsOutlineColorOccluded[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Material"] = function(state)
+        local material = Enum.Material[state]
+        if material then
+            espInterface.teamSettings.enemy.chamsMaterial = material
+            espInterface.teamSettings.enemy.chamsFillMaterial = material
+            espInterface.teamSettings.enemy.chamsOutlineMaterial = material
+        end
     end
 
     callbackList["Enemy ESP%%Highlight Visible Check"] = function(state)
@@ -5388,24 +5446,69 @@ LPH_JIT_MAX(function() -- Main Cheat
         espInterface.teamSettings.friendly.chams = state
     end
 
-    callbackList["Team ESP%%Highlight Outline Color"] = function(state)
+    callbackList["Team ESP%%Highlight Visible Fill Color"] = function(state)
+        espInterface.teamSettings.friendly.chamsFillColorVisible[1] = state
+        espInterface.teamSettings.friendly.chamsFillColor[1] = state
+    end
+
+    callbackList["Team ESP%%Highlight Visible Fill Opacity"] = function(state)
+        espInterface.teamSettings.friendly.chamsFillColorVisible[2] = state * 0.01
+        espInterface.teamSettings.friendly.chamsFillColor[2] = state * 0.01
+    end
+
+    callbackList["Team ESP%%Highlight Visible Outline Color"] = function(state)
+        espInterface.teamSettings.friendly.chamsOutlineColorVisible[1] = state
         espInterface.teamSettings.friendly.chamsOutlineColor[1] = state
     end
 
-    callbackList["Team ESP%%Highlight Outline Opacity"] = function(state)
+    callbackList["Team ESP%%Highlight Visible Outline Opacity"] = function(state)
+        espInterface.teamSettings.friendly.chamsOutlineColorVisible[2] = state * 0.01
         espInterface.teamSettings.friendly.chamsOutlineColor[2] = state * 0.01
     end
 
-    callbackList["Team ESP%%Highlight Fill Color"] = function(state)
-        espInterface.teamSettings.friendly.chamsOutlineColor[1] = state
+    callbackList["Team ESP%%Highlight Occluded Fill Color"] = function(state)
+        espInterface.teamSettings.friendly.chamsFillColorOccluded[1] = state
     end
 
-    callbackList["Team ESP%%Highlight Fill Opacity"] = function(state)
-        espInterface.teamSettings.friendly.chamsOutlineColor[2] = state * 0.01
+    callbackList["Team ESP%%Highlight Occluded Fill Opacity"] = function(state)
+        espInterface.teamSettings.friendly.chamsFillColorOccluded[2] = state * 0.01
+    end
+
+    callbackList["Team ESP%%Highlight Occluded Outline Color"] = function(state)
+        espInterface.teamSettings.friendly.chamsOutlineColorOccluded[1] = state
+    end
+
+    callbackList["Team ESP%%Highlight Occluded Outline Opacity"] = function(state)
+        espInterface.teamSettings.friendly.chamsOutlineColorOccluded[2] = state * 0.01
+    end
+
+    callbackList["Team ESP%%Highlight Material"] = function(state)
+        local material = Enum.Material[state]
+        if material then
+            espInterface.teamSettings.friendly.chamsMaterial = material
+            espInterface.teamSettings.friendly.chamsFillMaterial = material
+            espInterface.teamSettings.friendly.chamsOutlineMaterial = material
+        end
     end
 
     callbackList["Team ESP%%Highlight Visible Check"] = function(state)
         espInterface.teamSettings.friendly.chamsVisibleOnly = state
+    end
+
+    callbackList["Cheat Settings%%Watermark"] = function(state)
+        watermarkText.Visible = state
+    end
+
+    callbackList["Cheat Settings%%Watermark Text"] = function(state)
+        watermarkText.Text = state and state ~= "" and state or "Noname.gg"
+    end
+
+    callbackList["Cheat Settings%%Watermark Color"] = function(state)
+        watermarkText.Color = state
+    end
+
+    callbackList["Backtracking%%Ghost"] = function(state)
+        -- noop: backtrack code reads the value directly via wapus:GetValue
     end
 
     local customModel
@@ -5451,6 +5554,16 @@ LPH_JIT_MAX(function() -- Main Cheat
     local deltaTime = 0
     local lastTime = 0
     local nextShot = 0
+    local watermarkText = drawing.new("Text")
+    watermarkText.Visible = false
+    watermarkText.Text = "Noname.gg"
+    watermarkText.Size = 16
+    watermarkText.Font = drawing.Fonts.UI
+    watermarkText.Color = Color3.new(1, 1, 1)
+    watermarkText.Outline = true
+    watermarkText.OutlineColor = Color3.new(0, 0, 0)
+    watermarkText.Position = Vector2.new(8, 8)
+
     table.insert(connectionList, runService.Heartbeat:Connect(LPH_NO_VIRTUALIZE(function(ndt)
         local currentCharObject = charInterface.getCharacterObject()
         local rootPart = currentCharObject and currentCharObject:getRealRootPart()
@@ -5465,6 +5578,11 @@ LPH_JIT_MAX(function() -- Main Cheat
             chanceTwo = math.random(1, 100)
             lastRandom = clockTime
         end;
+
+            if watermarkText.Visible then
+            watermarkText.Position = Vector2.new(8, 8)
+            watermarkText.Text = wapus:GetValue("Cheat Settings", "Watermark Text") or "Noname.gg"
+        end
 
         if controller and weapon then
             local isHidden = (hidden or weapon._blackScoped or ((wapus:GetValue("Third Person", "Enabled") and wapus:GetValue("Third Person", "Show Character")) and (wapus:GetValue("Third Person", "Show Character While Aiming") or not aiming)))
@@ -5842,8 +5960,25 @@ LPH_JIT_MAX(function() -- Main Cheat
                             Material = Enum.Material[wapus:GetValue("Backtracking", "Character Material")],
                             Transparency = wapus:GetValue("Backtracking", "Character Transparency") * 0.01,
                             Color = wapus:GetValue("Backtracking", "Character Color"),
-                            CanCollide = true
+                            CanCollide = not wapus:GetValue("Backtracking", "Ghost")
                         }
+
+                        -- sanitize clone parts to avoid physics and script interference
+                        task.spawn(function()
+                            local ok, err = pcall(function()
+                                for _, desc in ipairs(clone:GetDescendants()) do
+                                    if desc:IsA("BasePart") then
+                                        desc.Anchored = true
+                                        desc.CanCollide = properties.CanCollide
+                                    elseif desc:IsA("Humanoid") or desc:IsA("Animator") or desc:IsA("Script") or desc:IsA("LocalScript") then
+                                        desc:Destroy()
+                                    end
+                                end
+                            end)
+                            if not ok then
+                                -- ignore sanitize errors
+                            end
+                        end)
 
                         local _, uncache = cham.new(clone, properties, false, true, false)
                         clone.Parent = backtrackObjects
@@ -6196,6 +6331,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local misc = menu:CreateTab("Misc")
     local settings = menu:CreateTab("Settings")
 
+    local watermarkSettings = settings:CreateSection("Watermark", false, "half")
     local aimbot = legit:CreateSection("Aim Bot", false, "half")
     local fovsettings = aimbot:AddSection("FOV Settings", false, "half")
     local silentaim = legit:CreateSection("Silent Aim", true, "half")
@@ -6224,6 +6360,8 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local chatspam = misc:CreateSection("Chat Spam", true, "third")
     local hopper = misc:CreateSection("Server Hopper", true, "third")
     --local votekick = hopper:AddSection("Votekick")
+
+    -- watermark moved to Cheat Settings (single toggle)
 
     aimbot:AddToggle("Enabled", false, getCallback("Aim Bot%%Enabled")):AddKeyBind(nil, "Key Bind")
     aimbot:AddToggle("Visible Check", false, getCallback("Aim Bot%%Visible Check"))
@@ -6266,6 +6404,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     backtrack:AddSlider("Character Transparency", 50, 0, 100, 1, "%", getCallback("Backtracking%%Character Transparency"))
     backtrack:AddDropdown("Character Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Backtracking%%Character Material"))
     backtrack:AddToggle("Clone Character", true, getCallback("Backtracking%%Clone Character"))
+    backtrack:AddToggle("Ghost", true, getCallback("Backtracking%%Ghost"))
 
     gunmods:AddToggle("No Recoil", false, getCallback("Gun Mods%%No Recoil"))
     gunmods:AddToggle("No Spread", false, getCallback("Gun Mods%%No Spread"))
@@ -6341,9 +6480,16 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     enemyesp:AddToggle("Health Percents", false, getCallback("Enemy ESP%%Health Percents")):AddColorPicker("Health Number Color", Color3.fromRGB(255,255,255), getCallback("Enemy ESP%%Health Number Color"))
     --enemyesp:AddSlider("Text Size", 20, 5, 40, 1, " px", getCallback("Enemy ESP%%Text Size"))
     enemyesp:AddToggle("Text Outlines", true, getCallback("Enemy ESP%%Text Outlines")):AddColorPicker("Text Outline Color", Color3.fromRGB(0,0,0), getCallback("Enemy ESP%%Text Outline Color"))
-    enemyesp:AddToggle("Highlight Chams", false, getCallback("Enemy ESP%%Highlight Chams")):AddColorPicker("Highlight Outline Color", Color3.fromRGB(0,0,0), getCallback("Enemy ESP%%Highlight Outline Color")):AddColorPicker("Highlight Fill Color", Color3.fromRGB(0,0,255), getCallback("Enemy ESP%%Highlight Fill Color"))
-    enemyesp:AddSlider("Highlight Fill Transparency", 50, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Fill Opacity"))
-    enemyesp:AddSlider("Highlight Outline Transparency", 0, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Outline Opacity"))
+        enemyesp:AddToggle("Highlight Chams", false, getCallback("Enemy ESP%%Highlight Chams"))
+    enemyesp:AddColorPicker("Visible Fill Color", Color3.fromRGB(0,0,255), getCallback("Enemy ESP%%Highlight Visible Fill Color"))
+    enemyesp:AddSlider("Visible Fill Transparency", 50, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Visible Fill Opacity"))
+    enemyesp:AddColorPicker("Visible Outline Color", Color3.fromRGB(0,0,0), getCallback("Enemy ESP%%Highlight Visible Outline Color"))
+    enemyesp:AddSlider("Visible Outline Transparency", 0, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Visible Outline Opacity"))
+    enemyesp:AddColorPicker("Occluded Fill Color", Color3.fromRGB(0,255,0), getCallback("Enemy ESP%%Highlight Occluded Fill Color"))
+    enemyesp:AddSlider("Occluded Fill Transparency", 25, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Occluded Fill Opacity"))
+    enemyesp:AddColorPicker("Occluded Outline Color", Color3.fromRGB(0,0,0), getCallback("Enemy ESP%%Highlight Occluded Outline Color"))
+    enemyesp:AddSlider("Occluded Outline Transparency", 0, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Occluded Outline Opacity"))
+    enemyesp:AddDropdown("Highlight Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Enemy ESP%%Highlight Material"))
     enemyesp:AddToggle("Highlight Visible Check", false, getCallback("Enemy ESP%%Highlight Visible Check"))
 
     --[[teamesp:AddToggle("Enabled", true, getCallback("Team ESP%%Enabled")):AddKeyBind(nil, "Key Bind")
@@ -6372,10 +6518,16 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     teamesp:AddToggle("Health Percents", false, getCallback("Team ESP%%Health Percents")):AddColorPicker("Health Number Color", Color3.fromRGB(255,255,255), getCallback("Team ESP%%Health Number Color"))
     --enemyesp:AddSlider("Text Size", 20, 5, 40, 1, " px", getCallback("Team ESP%%Text Size"))
     teamesp:AddToggle("Text Outlines", true, getCallback("Team ESP%%Text Outlines")):AddColorPicker("Text Outline Color", Color3.fromRGB(0,0,0), getCallback("Team ESP%%Text Outline Color"))
-    teamesp:AddToggle("Highlight Chams", false, getCallback("Team ESP%%Highlight Chams")):AddColorPicker("Highlight Outline Color", Color3.fromRGB(0,0,0), getCallback("Team ESP%%Highlight Outline Color")):AddColorPicker("Highlight Fill Color", Color3.fromRGB(0,0,255), getCallback("Team ESP%%Highlight Fill Color"))
+    teamesp:AddToggle("Highlight Chams", false, getCallback("Team ESP%%Highlight Chams"))
+    teamesp:AddColorPicker("Visible Fill Color", Color3.fromRGB(0,0,255), getCallback("Team ESP%%Highlight Visible Fill Color"))
+    teamesp:AddSlider("Visible Fill Transparency", 50, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Visible Fill Opacity"))
+    teamesp:AddColorPicker("Visible Outline Color", Color3.fromRGB(0,0,0), getCallback("Team ESP%%Highlight Visible Outline Color"))
+    teamesp:AddSlider("Visible Outline Transparency", 0, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Visible Outline Opacity"))
+    teamesp:AddColorPicker("Occluded Fill Color", Color3.fromRGB(0,255,0), getCallback("Team ESP%%Highlight Occluded Fill Color"))
+    teamesp:AddSlider("Occluded Fill Transparency", 25, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Occluded Fill Opacity"))
+    teamesp:AddColorPicker("Occluded Outline Color", Color3.fromRGB(0,0,0), getCallback("Team ESP%%Highlight Occluded Outline Color"))
+    teamesp:AddSlider("Occluded Outline Transparency", 0, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Occluded Outline Opacity"))
     teamesp:AddToggle("Highlight Visible Check", false, getCallback("Team ESP%%Highlight Visible Check"))
-    teamesp:AddSlider("Highlight Fill Transparency", 50, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Fill Transparency"))
-    teamesp:AddSlider("Highlight Outline Transparency", 0, 0, 100, 1, "%", getCallback("Team ESP%%Highlight Outline Transparency"))]]
 
     chams:AddToggle("Arm Chams", false, getCallback("Chams%%Arm Chams")):AddColorPicker("Arm Color", Color3.new(0.1, 0.1, 1), getCallback("Chams%%Arm Color"))
     chams:AddSlider("Arm Transparency", 50, 0, 100, 1, "%", getCallback("Chams%%Arm Transparency"))
@@ -6484,6 +6636,9 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     cheatSettings:AddToggle("Save Last Config", true, getCallback("Cheat Settings%%Save Last Config"))
     cheatSettings:AddToggle("Show Keybind List", false, getCallback("Cheat Settings%%Show Keybind List"))
     cheatSettings:AddToggle("Show Key Name", false, getCallback("Cheat Settings%%Show Key Name"))
+    cheatSettings:AddToggle("Watermark", false, getCallback("Cheat Settings%%Watermark"))
+    cheatSettings:AddTextBox("Watermark Text", "Noname.gg", getCallback("Cheat Settings%%Watermark Text"))
+    cheatSettings:AddColorPicker("Watermark Color", Color3.new(1, 1, 1), getCallback("Cheat Settings%%Watermark Color"))
     cheatSettings:AddButton("Copy Discord Invite", function()
         setclipboard("https://discord.gg/tUEJZYvF9d") -- pro
     end)
