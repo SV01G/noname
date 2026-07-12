@@ -1,11 +1,39 @@
+--[[
+
+    ~ New Discord Server ~
+
+    [ https://discord.gg/tUEJZYvF9d ]
+
+    ~ Index ~
+
+    [ Drawing Library ] - [ Line 111 ]
+    [ UI Library ] - [ Line 1117 ]
+    [ Cham Library ] - [ Line 2710 ]
+    [ Main Cheat ] - [ Line 2766 ]
+    [ Make UI ] - [ Line 5778 ]
+
+    ~ Credits ~
+
+    [ iRay ] - [ @896378803868295178 ] | Lead developer
+    [ ipufo ] - [ @819756897543389184 ] | Took over development since 5/19/2025
+    [ Mickey ] - [ @953720095811719208 ] | Developed perfect trajectory function and ESP library
+    [ Redpoint ] - [ @418013390024474624 ] | Contributed to triangles in the custom drawing api
+
+    ~ Special Thanks ~
+
+    [ BBot ] - [ Inspiration to make such a nice UI and high quality/quantity feature list ]
+    [ Legacy ] - [ Best and only beta tester ]
+
+]]
+
 function LPH_NO_VIRTUALIZE(fuction) -- unnecessary now
     return fuction
 end
 LPH_JIT_MAX = LPH_NO_VIRTUALIZE
 
 local devMode = true
-local defaultUIName = "NNPaste" -- $$$
-local folderName = "Phantom Forces Ch"
+local defaultUIName = "NoName.gg" -- $$$
+local folderName = "Phantom Forces Cheat"
 local connectionList = {}
 local callbackList = {}
 local playerStatus = {}
@@ -19,7 +47,7 @@ local wapus
 local userName = game:GetService("Players").LocalPlayer.Name
 local fileName = tostring(game.JobId) .. ".txt"
 if isfolder(folderName) and isfolder(folderName .. "/cache") and isfolder(folderName .. "/cache/votekick data") and isfile(folderName .. "/cache/votekick data/" .. fileName) and readfile(folderName .. "/cache/votekick data/" .. fileName) ~= userName then
-    local hostName = readfile("Phantom Forces Ch/cache/votekick data/" .. tostring(game.JobId) .. ".txt")
+    local hostName = readfile("Phantom Forces Cheat/cache/votekick data/" .. tostring(game.JobId) .. ".txt")
     local modules, require_module
 
     for _, func in getgc(false) do
@@ -2900,25 +2928,27 @@ LPH_JIT_MAX(function() -- Main Cheat
     local function getClosest(origin, fov, deadfov, visibleCheck, partName)
         local distance = fov or math.huge
         local position, closestPlayer, part
-
-        local partsToCheck = (partName == "Closest") and {"Head", "Torso", "HumanoidRootPart"} or {partName}
+        local targetPartNames = partName == "Closest" and {"Head", "Torso"} or {partName or "Head"}
 
         replicationInterface.operateOnAllEntries(function(player, entry)
             local character = entry._thirdPersonObject and entry._thirdPersonObject._characterModelHash
 
-            if character and entry.isEnemy then
+            if character and entry._isEnemy then
                 local localposition = camera.CFrame.Position
 
-                for , checkPart in partsToCheck do
-                    if character[checkPart] then
-                        local target = character[checkPart].Position
+                for _, candidatePartName in ipairs(targetPartNames) do
+                    local bodyPart = character[candidatePartName]
+
+                    if bodyPart then
+                        local target = bodyPart.Position
 
                         if not visibleCheck or not raycast(localposition, target - localposition, physicsignore) then
-                            local screenPosition = camera:WorldToViewportPoint(target)
+                            local screenPosition, onscreen = camera:WorldToViewportPoint(target)
                             local screenDistance = (Vector2.new(screenPosition.X, screenPosition.Y) - origin).Magnitude
+                            local screenDirection = screenPosition.Z
 
-                            if screenPosition.Z > 0 and screenDistance < distance and (not deadfov or screenDistance >= deadfov) then
-                                part = character[checkPart]
+                            if screenPosition.Z > 0 and screenDistance < distance and (not deadfov or screenDirection >= deadfov) then
+                                part = bodyPart
                                 position = target
                                 distance = screenDistance
                                 closestPlayer = entry
@@ -3512,7 +3542,7 @@ LPH_JIT_MAX(function() -- Main Cheat
             end
 
             if wapus:GetValue("Silent Aim", "Enabled") and (wapus:GetValue("Silent Aim", "Hit Chance") >= chanceOne) then
-                local target, entry, part = getClosest(silentaimfov.Position, wapus:GetValue("Silent Aim", "Use FOV") and silentaimfov.Radius, wapus:GetValue("Silent Aim", "Use Dead FOV") and silentaimdeadfov.Radius, wapus:GetValue("Silent Aim", "Visible Check"), (wapus:GetValue("Silent Aim", "Head Shot Chance") >= chanceTwo) and "Head" or "Torso")
+                local target, entry, part = getClosest(silentaimfov.Position, wapus:GetValue("Silent Aim", "Use FOV") and silentaimfov.Radius, wapus:GetValue("Silent Aim", "Use Dead FOV") and silentaimdeadfov.Radius, wapus:GetValue("Silent Aim", "Visible Check"), wapus:GetValue("Silent Aim", "Target Part"))
 
                 if target then
                     local player = entry._player
@@ -3730,7 +3760,7 @@ LPH_JIT_MAX(function() -- Main Cheat
             end
 
             if wapus:GetValue("Silent Aim", "Enabled") and (wapus:GetValue("Silent Aim", "Hit Chance") >= chanceOne) then
-                local target, entry, part = getClosest(silentaimfov.Position, wapus:GetValue("Silent Aim", "Use FOV") and silentaimfov.Radius, wapus:GetValue("Silent Aim", "Use Dead FOV") and silentaimdeadfov.Radius, wapus:GetValue("Silent Aim", "Visible Check"), (wapus:GetValue("Silent Aim", "Head Shot Chance") >= chanceTwo) and "Head" or "Torso")
+                local target, entry, part = getClosest(silentaimfov.Position, wapus:GetValue("Silent Aim", "Use FOV") and silentaimfov.Radius, wapus:GetValue("Silent Aim", "Use Dead FOV") and silentaimdeadfov.Radius, wapus:GetValue("Silent Aim", "Visible Check"), wapus:GetValue("Silent Aim", "Target Part"))
 
                 if target then
                     local player = entry._player
@@ -6071,7 +6101,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     else
         local themeData = {
             ["Title"] = defaultUIName,
-            ["Accent Color"] = {30, 80, 180},
+            ["Accent Color"] = {127, 72, 163},
             ["Text Color"] = {255, 255, 255},
             ["Background Color"] = {35, 35, 35},
             ["Light Background Color"] = {50, 50, 50},
@@ -6198,7 +6228,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     aimbot:AddToggle("Enabled", false, getCallback("Aim Bot%%Enabled")):AddKeyBind(nil, "Key Bind")
     aimbot:AddToggle("Visible Check", false, getCallback("Aim Bot%%Visible Check"))
     aimbot:AddSlider("Smoothness", 0, 0, 0.99, 0.01, "x", getCallback("Aim Bot%%Smoothness"))
-    aimbot:AddDropdown("Target Part", "Head", {"Closest", "Head", "Torso"}, getCallback("Aim Bot%%Target Part"))
+    aimbot:AddDropdown("Target Part", "Head", {"Head", "Torso"}, getCallback("Aim Bot%%Target Part"))
     aimbot:AddToggle("Use FOV", false, getCallback("Aim Bot%%Use FOV"))
     aimbot:AddSlider("FOV Radius", 300, 2, 1000, 1, "px", getCallback("Aim Bot%%FOV Radius"))
     aimbot:AddToggle("Show FOV Circle", false, getCallback("Aim Bot%%Show FOV Circle")):AddKeyBind(nil, "FOV Key Bind"):AddColorPicker("FOV Circle Color", Color3.new(1, 1, 1), getCallback("Aim Bot%%FOV Circle Color"))
@@ -6215,7 +6245,8 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     silentaim:AddToggle("Enabled", false, getCallback("Silent Aim%%Enabled")):AddKeyBind(nil, "Key Bind")
     silentaim:AddToggle("Visible Check", false, getCallback("Silent Aim%%Visible Check"))
     --silentaim:AddToggle("Undetected", true, getCallback("Silent Aim%%Undetected"))
-    silentaim:AddDropdown("Target Part", "Closest", {"Closest", "Head", "Torso"}, getCallback("Silent Aim%%Target Part"))
+    silentaim:AddSlider("Hit Chance", 100, 1, 100, 1, "%", getCallback("Silent Aim%%Hit Chance"))
+    silentaim:AddDropdown("Target Part", "Head", {"Head", "Torso", "Closest"}, getCallback("Silent Aim%%Target Part"))
     silentaim:AddToggle("Use FOV", false, getCallback("Silent Aim%%Use FOV"))
     silentaim:AddSlider("FOV Radius", 300, 2, 1000, 1, "px", getCallback("Silent Aim%%FOV Radius"))
     silentaim:AddToggle("Show FOV Circle", false, getCallback("Silent Aim%%Show FOV Circle")):AddKeyBind(nil, "FOV Key Bind"):AddColorPicker("FOV Circle Color", Color3.new(1, 1, 1), getCallback("Silent Aim%%FOV Circle Color"))
