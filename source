@@ -3853,11 +3853,10 @@ LPH_JIT_MAX(function() -- Main Cheat
                             end
 
                             local player = players[model.Name]
-                            local entry = replicationInterface.getEntry(player)
-                            local head = entry._thirdPersonObject and entry._thirdPersonObject._characterModelHash and entry._thirdPersonObject._characterModelHash.Head
+                            local hitPart = (part.Name == "Head") and "Head" or "Torso"
 
                             ticketCache[extra.bulletTicket] = true
-                            send(network, "bullethit", extra.uniqueId, player, position, (part == head) and "Head" or "Torso", extra.bulletTicket + ticketAddition, network.getTime() + newSpawnCache.latency + newSpawnCache.currentAddition)
+                            send(network, "bullethit", extra.uniqueId, player, position, hitPart, extra.bulletTicket + ticketAddition, network.getTime() + newSpawnCache.latency + newSpawnCache.currentAddition)
                         end
                     end
 
@@ -5842,8 +5841,15 @@ LPH_JIT_MAX(function() -- Main Cheat
                             Material = Enum.Material[wapus:GetValue("Backtracking", "Character Material")],
                             Transparency = wapus:GetValue("Backtracking", "Character Transparency") * 0.01,
                             Color = wapus:GetValue("Backtracking", "Character Color"),
-                            CanCollide = true
+                            CanCollide = false
                         }
+
+                        for _, descendant in ipairs(clone:GetDescendants()) do
+                            if descendant:IsA("BasePart") then
+                                descendant.Anchored = true
+                                descendant.CanCollide = false
+                            end
+                        end
 
                         local _, uncache = cham.new(clone, properties, false, true, false)
                         clone.Parent = backtrackObjects
