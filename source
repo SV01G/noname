@@ -6492,7 +6492,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     enemyesp:AddDropdown("Highlight Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Enemy ESP%%Highlight Material"))
     enemyesp:AddToggle("Highlight Visible Check", false, getCallback("Enemy ESP%%Highlight Visible Check"))
 
-    --[[teamesp:AddToggle("Enabled", true, getCallback("Team ESP%%Enabled")):AddKeyBind(nil, "Key Bind")
+    teamesp:AddToggle("Enabled", true, getCallback("Team ESP%%Enabled")):AddKeyBind(nil, "Key Bind")
     teamesp:AddToggle("Boxes", false, getCallback("Team ESP%%Boxes")):AddColorPicker("Box Color", Color3.fromRGB(0,255,255), getCallback("Team ESP%%Box Color"))
     teamesp:AddSlider("Box Opacity", 100, 1, 100, 1, "%", getCallback("Team ESP%%Box Opacity"))
     --enemyesp:AddSlider("Box Thickness", 1, 1, 10, 1, " px", getCallback("Team ESP%%Box Thickness"))
