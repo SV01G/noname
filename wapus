@@ -2901,22 +2901,29 @@ LPH_JIT_MAX(function() -- Main Cheat
         local distance = fov or math.huge
         local position, closestPlayer, part
 
+        local partsToCheck = (partName == "Closest") and {"Head", "Torso", "HumanoidRootPart"} or {partName}
+
         replicationInterface.operateOnAllEntries(function(player, entry)
             local character = entry._thirdPersonObject and entry._thirdPersonObject._characterModelHash
 
-            if character and entry._isEnemy then
+            if character and entry.isEnemy then
                 local localposition = camera.CFrame.Position
-                local target = character[partName].Position
 
-                if not visibleCheck or not raycast(localposition, target - localposition, physicsignore) then
-                    local screenPosition, onscreen = camera:WorldToViewportPoint(target)
-                    local screenDistance = (Vector2.new(screenPosition.X, screenPosition.Y) - origin).Magnitude
+                for , checkPart in partsToCheck do
+                    if character[checkPart] then
+                        local target = character[checkPart].Position
 
-                    if screenPosition.Z > 0 and screenDistance < distance and (not deadfov or screenDirection >= deadfov) then
-                        part = character[partName]
-                        position = target
-                        distance = screenDistance
-                        closestPlayer = entry
+                        if not visibleCheck or not raycast(localposition, target - localposition, physicsignore) then
+                            local screenPosition = camera:WorldToViewportPoint(target)
+                            local screenDistance = (Vector2.new(screenPosition.X, screenPosition.Y) - origin).Magnitude
+
+                            if screenPosition.Z > 0 and screenDistance < distance and (not deadfov or screenDistance >= deadfov) then
+                                part = character[checkPart]
+                                position = target
+                                distance = screenDistance
+                                closestPlayer = entry
+                            end
+                        end
                     end
                 end
             end
@@ -3505,10 +3512,7 @@ LPH_JIT_MAX(function() -- Main Cheat
             end
 
             if wapus:GetValue("Silent Aim", "Enabled") and (wapus:GetValue("Silent Aim", "Hit Chance") >= chanceOne) then
-                -- In bulletObject.new and network:send for silent aim, replace the getClosest call:
-local targetPartSA = wapus:GetValue("Silent Aim", "Target Part")
-local partNameSA = targetPartSA == "Closest" and "Torso" or targetPartSA
-local target, entry, part = getClosest(silentaimfov.Position, ..., partNameSA)
+                local target, entry, part = getClosest(silentaimfov.Position, wapus:GetValue("Silent Aim", "Use FOV") and silentaimfov.Radius, wapus:GetValue("Silent Aim", "Use Dead FOV") and silentaimdeadfov.Radius, wapus:GetValue("Silent Aim", "Visible Check"), (wapus:GetValue("Silent Aim", "Head Shot Chance") >= chanceTwo) and "Head" or "Torso")
 
                 if target then
                     local player = entry._player
