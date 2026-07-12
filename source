@@ -5436,16 +5436,8 @@ LPH_JIT_MAX(function() -- Main Cheat
         espInterface.teamSettings.friendly.chamsVisibleOnly = state
     end
 
-    callbackList["Settings%%Watermark"] = function(state)
+    callbackList["Cheat Settings%%Watermark"] = function(state)
         watermarkText.Visible = state
-    end
-
-    callbackList["Settings%%Watermark Text"] = function(state)
-        watermarkText.Text = state and state ~= "" and state or "Noname.gg"
-    end
-
-    callbackList["Settings%%Watermark Color"] = function(state)
-        watermarkText.Color = state
     end
 
     local customModel
@@ -6281,9 +6273,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local hopper = misc:CreateSection("Server Hopper", true, "third")
     --local votekick = hopper:AddSection("Votekick")
 
-    watermarkSettings:AddToggle("Enabled", false, getCallback("Settings%%Watermark"))
-    watermarkSettings:AddTextBox("Text", "Noname.gg", getCallback("Settings%%Watermark Text"))
-    watermarkSettings:AddColorPicker("Color", Color3.new(1, 1, 1), getCallback("Settings%%Watermark Color"))
+    -- watermark moved to Cheat Settings (single toggle)
 
     aimbot:AddToggle("Enabled", false, getCallback("Aim Bot%%Enabled")):AddKeyBind(nil, "Key Bind")
     aimbot:AddToggle("Visible Check", false, getCallback("Aim Bot%%Visible Check"))
@@ -6545,6 +6535,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     cheatSettings:AddToggle("Save Last Config", true, getCallback("Cheat Settings%%Save Last Config"))
     cheatSettings:AddToggle("Show Keybind List", false, getCallback("Cheat Settings%%Show Keybind List"))
     cheatSettings:AddToggle("Show Key Name", false, getCallback("Cheat Settings%%Show Key Name"))
+    cheatSettings:AddToggle("Watermark", false, getCallback("Cheat Settings%%Watermark"))
     cheatSettings:AddButton("Copy Discord Invite", function()
         setclipboard("https://discord.gg/tUEJZYvF9d") -- pro
     end)
