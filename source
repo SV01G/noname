@@ -32,7 +32,7 @@ end
 LPH_JIT_MAX = LPH_NO_VIRTUALIZE
 
 local devMode = true
-local defaultUIName = "NoName.gg" -- $$$
+local defaultUIName = "Noname.gg" -- $$$
 local folderName = "Phantom Forces Cheat"
 local connectionList = {}
 local callbackList = {}
@@ -5014,7 +5014,10 @@ LPH_JIT_MAX(function() -- Main Cheat
             chams = false,
             chamsVisibleOnly = false,
             chamsFillColor = { Color3.new(0.2, 0.2, 0.2), 0.5 },
+            chamsFillMaterial = Enum.Material.ForceField,
             chamsOutlineColor = { Color3.new(1,0,0), 0 },
+            chamsOutlineMaterial = Enum.Material.ForceField,
+            chamsMaterial = Enum.Material.ForceField,
         },
         friendly = {
             enabled = false,
@@ -5061,7 +5064,10 @@ LPH_JIT_MAX(function() -- Main Cheat
             chams = false,
             chamsVisibleOnly = false,
             chamsFillColor = { Color3.new(0.2, 0.2, 0.2), 0.5 },
-            chamsOutlineColor = { Color3.new(0,1,0), 0 }
+            chamsFillMaterial = Enum.Material.ForceField,
+            chamsOutlineColor = { Color3.new(0,1,0), 0 },
+            chamsOutlineMaterial = Enum.Material.ForceField,
+            chamsMaterial = Enum.Material.ForceField
         }
     }
 
@@ -5238,11 +5244,20 @@ LPH_JIT_MAX(function() -- Main Cheat
     end
 
     callbackList["Enemy ESP%%Highlight Fill Color"] = function(state)
-        espInterface.teamSettings.enemy.chamsOutlineColor[1] = state
+        espInterface.teamSettings.enemy.chamsFillColor[1] = state
     end
 
     callbackList["Enemy ESP%%Highlight Fill Opacity"] = function(state)
-        espInterface.teamSettings.enemy.chamsOutlineColor[2] = state * 0.01
+        espInterface.teamSettings.enemy.chamsFillColor[2] = state * 0.01
+    end
+
+    callbackList["Enemy ESP%%Highlight Material"] = function(state)
+        local material = Enum.Material[state]
+        if material then
+            espInterface.teamSettings.enemy.chamsMaterial = material
+            espInterface.teamSettings.enemy.chamsFillMaterial = material
+            espInterface.teamSettings.enemy.chamsOutlineMaterial = material
+        end
     end
 
     callbackList["Enemy ESP%%Highlight Visible Check"] = function(state)
@@ -5404,8 +5419,33 @@ LPH_JIT_MAX(function() -- Main Cheat
         espInterface.teamSettings.friendly.chamsOutlineColor[2] = state * 0.01
     end
 
+    callbackList["Team ESP%%Highlight Fill Color"] = function(state)
+        espInterface.teamSettings.friendly.chamsFillColor[1] = state
+    end
+
+    callbackList["Team ESP%%Highlight Material"] = function(state)
+        local material = Enum.Material[state]
+        if material then
+            espInterface.teamSettings.friendly.chamsMaterial = material
+            espInterface.teamSettings.friendly.chamsFillMaterial = material
+            espInterface.teamSettings.friendly.chamsOutlineMaterial = material
+        end
+    end
+
     callbackList["Team ESP%%Highlight Visible Check"] = function(state)
         espInterface.teamSettings.friendly.chamsVisibleOnly = state
+    end
+
+    callbackList["Settings%%Watermark"] = function(state)
+        watermarkText.Visible = state
+    end
+
+    callbackList["Settings%%Watermark Text"] = function(state)
+        watermarkText.Text = state and state ~= "" and state or "Noname.gg"
+    end
+
+    callbackList["Settings%%Watermark Color"] = function(state)
+        watermarkText.Color = state
     end
 
     local customModel
@@ -5451,6 +5491,16 @@ LPH_JIT_MAX(function() -- Main Cheat
     local deltaTime = 0
     local lastTime = 0
     local nextShot = 0
+    local watermarkText = drawing.new("Text")
+    watermarkText.Visible = false
+    watermarkText.Text = "Noname.gg"
+    watermarkText.Size = 16
+    watermarkText.Font = drawing.Fonts.UI
+    watermarkText.Color = Color3.new(1, 1, 1)
+    watermarkText.Outline = true
+    watermarkText.OutlineColor = Color3.new(0, 0, 0)
+    watermarkText.Position = Vector2.new(8, 8)
+
     table.insert(connectionList, runService.Heartbeat:Connect(LPH_NO_VIRTUALIZE(function(ndt)
         local currentCharObject = charInterface.getCharacterObject()
         local rootPart = currentCharObject and currentCharObject:getRealRootPart()
@@ -5465,6 +5515,11 @@ LPH_JIT_MAX(function() -- Main Cheat
             chanceTwo = math.random(1, 100)
             lastRandom = clockTime
         end;
+
+        if watermarkText.Visible then
+            watermarkText.Position = Vector2.new(8, 8)
+            watermarkText.Text = wapus:GetValue("Settings", "Watermark Text") or "Noname.gg"
+        end
 
         if controller and weapon then
             local isHidden = (hidden or weapon._blackScoped or ((wapus:GetValue("Third Person", "Enabled") and wapus:GetValue("Third Person", "Show Character")) and (wapus:GetValue("Third Person", "Show Character While Aiming") or not aiming)))
@@ -6196,6 +6251,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local misc = menu:CreateTab("Misc")
     local settings = menu:CreateTab("Settings")
 
+    local watermarkSettings = settings:CreateSection("Watermark", false, "half")
     local aimbot = legit:CreateSection("Aim Bot", false, "half")
     local fovsettings = aimbot:AddSection("FOV Settings", false, "half")
     local silentaim = legit:CreateSection("Silent Aim", true, "half")
@@ -6224,6 +6280,10 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local chatspam = misc:CreateSection("Chat Spam", true, "third")
     local hopper = misc:CreateSection("Server Hopper", true, "third")
     --local votekick = hopper:AddSection("Votekick")
+
+    watermarkSettings:AddToggle("Enabled", false, getCallback("Settings%%Watermark"))
+    watermarkSettings:AddTextBox("Text", "Noname.gg", getCallback("Settings%%Watermark Text"))
+    watermarkSettings:AddColorPicker("Color", Color3.new(1, 1, 1), getCallback("Settings%%Watermark Color"))
 
     aimbot:AddToggle("Enabled", false, getCallback("Aim Bot%%Enabled")):AddKeyBind(nil, "Key Bind")
     aimbot:AddToggle("Visible Check", false, getCallback("Aim Bot%%Visible Check"))
@@ -6344,6 +6404,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     enemyesp:AddToggle("Highlight Chams", false, getCallback("Enemy ESP%%Highlight Chams")):AddColorPicker("Highlight Outline Color", Color3.fromRGB(0,0,0), getCallback("Enemy ESP%%Highlight Outline Color")):AddColorPicker("Highlight Fill Color", Color3.fromRGB(0,0,255), getCallback("Enemy ESP%%Highlight Fill Color"))
     enemyesp:AddSlider("Highlight Fill Transparency", 50, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Fill Opacity"))
     enemyesp:AddSlider("Highlight Outline Transparency", 0, 0, 100, 1, "%", getCallback("Enemy ESP%%Highlight Outline Opacity"))
+    enemyesp:AddDropdown("Highlight Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Enemy ESP%%Highlight Material"))
     enemyesp:AddToggle("Highlight Visible Check", false, getCallback("Enemy ESP%%Highlight Visible Check"))
 
     --[[teamesp:AddToggle("Enabled", true, getCallback("Team ESP%%Enabled")):AddKeyBind(nil, "Key Bind")
