@@ -6331,7 +6331,6 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     local misc = menu:CreateTab("Misc")
     local settings = menu:CreateTab("Settings")
 
-    local watermarkSettings = settings:CreateSection("Watermark", false, "half")
     local aimbot = legit:CreateSection("Aim Bot", false, "half")
     local fovsettings = aimbot:AddSection("FOV Settings", false, "half")
     local silentaim = legit:CreateSection("Silent Aim", true, "half")
