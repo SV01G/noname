@@ -5868,7 +5868,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                                 p.Size = size
                                 p.CFrame = rootCFrame * CFrame.new(offset)
                                 p.Anchored = true
-                                p.CanCollide = true
+                                p.CanCollide = false
                                 p.Parent = parent
                                 return p
                             end
