@@ -5851,7 +5851,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                                     p.Size = size
                                     p.CFrame = rootCFrame * CFrame.new(offset)
                                     p.Anchored = true
-                                    p.CanCollide = false
+                                    p.CanCollide = true
                                     p.Parent = proxy
                                     return p
                                 end
@@ -5876,7 +5876,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                                 p.Size = size
                                 p.CFrame = rootCFrame * CFrame.new(offset)
                                 p.Anchored = true
-                                p.CanCollide = false
+                                p.CanCollide = true
                                 p.Parent = parent
                                 return p
                             end
@@ -5894,13 +5894,13 @@ LPH_JIT_MAX(function() -- Main Cheat
                             Material = Enum.Material[wapus:GetValue("Backtracking", "Character Material")],
                             Transparency = wapus:GetValue("Backtracking", "Character Transparency") * 0.01,
                             Color = wapus:GetValue("Backtracking", "Character Color"),
-                            CanCollide = false
+                            CanCollide = true
                         }
 
                         for _, descendant in ipairs(clone:GetDescendants()) do
                             if descendant:IsA("BasePart") then
                                 descendant.Anchored = true
-                                descendant.CanCollide = false
+                                descendant.CanCollide = true
                             end
                         end
 
