@@ -6068,32 +6068,9 @@ LPH_JIT_MAX(function() -- Main Cheat
         hitboxObjects:Destroy()
     end
     -- now was that so bad?
-    end)
 end)()
 
 LPH_NO_VIRTUALIZE(function() -- Make UI
-    local function uiSafeRun(fn)
-        local ok, err = pcall(fn)
-        if not ok then
-            pcall(function()
-                if folderName then
-                    writefile(folderName .. "/cache/ui_error.txt", tostring(err) .. "\n" .. debug.traceback())
-                end
-            end)
-
-            local ok2, dbg = pcall(function()
-                local d = Drawing.new("Text")
-                d.Position = Vector2.new(10, 10)
-                d.Color = Color3.new(1, 0, 0)
-                d.Size = 16
-                d.Visible = true
-                d.Text = "UI Error: " .. tostring(err)
-                return d
-            end)
-        end
-    end
-
-    uiSafeRun(function()
     local httpService = game:GetService("HttpService")
 
     if not isfolder(folderName) then -- theme.json, lastconfig.json, configs
@@ -6402,10 +6379,9 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     backtrack:AddDropdown("Character Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Backtracking%%Character Material"))
     backtrack:AddToggle("Clone Character", true, getCallback("Backtracking%%Clone Character"))
 
-    backtrack:AddToggle("Enabled", false, getCallback("Backtracking%%Enabled"))
-        :AddKeyBind(nil, "Key Bind")
-        :AddColorPicker("Character Color", Color3.new(0.1, 0.1, 1), getCallback("Backtracking%%Character Color"))
-        
+    backtrack:AddColorPicker("Visible Cham Color", Color3.fromRGB(84,154,255), getCallback("Backtracking%%Visible Cham Color"))
+    backtrack:AddColorPicker("Hidden Cham Color", Color3.fromRGB(150,150,150), getCallback("Backtracking%%Hidden Cham Color"))
+
     gunmods:AddToggle("No Recoil", false, getCallback("Gun Mods%%No Recoil"))
     gunmods:AddToggle("No Spread", false, getCallback("Gun Mods%%No Spread"))
     gunmods:AddToggle("Small Crosshair", false, getCallback("Gun Mods%%Small Crosshair"))
