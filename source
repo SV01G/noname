@@ -5851,7 +5851,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                                     p.Size = size
                                     p.CFrame = rootCFrame * CFrame.new(offset)
                                     p.Anchored = true
-                                    p.CanCollide = true
+                                    p.CanCollide = false
                                     p.Parent = proxy
                                     return p
                                 end
@@ -5876,7 +5876,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                                 p.Size = size
                                 p.CFrame = rootCFrame * CFrame.new(offset)
                                 p.Anchored = true
-                                p.CanCollide = true
+                                p.CanCollide = false
                                 p.Parent = parent
                                 return p
                             end
@@ -5894,13 +5894,13 @@ LPH_JIT_MAX(function() -- Main Cheat
                             Material = Enum.Material[wapus:GetValue("Backtracking", "Character Material")],
                             Transparency = wapus:GetValue("Backtracking", "Character Transparency") * 0.01,
                             Color = wapus:GetValue("Backtracking", "Character Color"),
-                            CanCollide = true
+                            CanCollide = false
                         }
 
                         for _, descendant in ipairs(clone:GetDescendants()) do
                             if descendant:IsA("BasePart") then
                                 descendant.Anchored = true
-                                descendant.CanCollide = true
+                                descendant.CanCollide = false
                             end
                         end
 
@@ -6011,48 +6011,6 @@ LPH_JIT_MAX(function() -- Main Cheat
                 cross4.Color = rainbow
             end
         end
-
-        -- Color backtrack proxies/chams differently when occluded vs visible
-        pcall(function()
-            if backtrackObjects and backtrackObjects.Parent and #backtrackObjects:GetChildren() > 0 and wapus:GetValue("Backtracking", "Enabled") then
-                local visibleColor = wapus:GetValue("Backtracking", "Visible Cham Color")
-                local hiddenColor = wapus:GetValue("Backtracking", "Hidden Cham Color")
-
-                local params = RaycastParams.new()
-                params.IgnoreWater = true
-                params.FilterType = Enum.RaycastFilterType.Blacklist
-                params.FilterDescendantsInstances = {ignore, hitboxObjects}
-
-                for _, model in ipairs(backtrackObjects:GetChildren()) do
-                    if model and model:IsA("Model") then
-                        -- pick a representative part for visibility testing
-                        local rep
-                        rep = model:FindFirstChild("Torso") or model:FindFirstChild("HumanoidRootPart") or model:FindFirstChildWhichIsA("BasePart")
-
-                        for _, part in ipairs(model:GetDescendants()) do
-                            if part:IsA("BasePart") then
-                                local isVisible = false
-                                if rep and camera and camera.CFrame then
-                                    local origin = camera.CFrame.Position
-                                    local dir = part.Position - origin
-                                    local res = workspace:Raycast(origin, dir, params)
-
-                                    if not res then
-                                        isVisible = true
-                                    else
-                                        if res.Instance and res.Instance:IsDescendantOf(model) then
-                                            isVisible = true
-                                        end
-                                    end
-                                end
-
-                                part.Color = (isVisible and visibleColor) or hiddenColor
-                            end
-                        end
-                    end
-                end
-            end
-        end)
     end)))
 
     unloadMain = function() -- this is not finished lol
@@ -6068,32 +6026,9 @@ LPH_JIT_MAX(function() -- Main Cheat
         hitboxObjects:Destroy()
     end
     -- now was that so bad?
-    end)
 end)()
 
 LPH_NO_VIRTUALIZE(function() -- Make UI
-    local function uiSafeRun(fn)
-        local ok, err = pcall(fn)
-        if not ok then
-            pcall(function()
-                if folderName then
-                    writefile(folderName .. "/cache/ui_error.txt", tostring(err) .. "\n" .. debug.traceback())
-                end
-            end)
-
-            local ok2, dbg = pcall(function()
-                local d = Drawing.new("Text")
-                d.Position = Vector2.new(10, 10)
-                d.Color = Color3.new(1, 0, 0)
-                d.Size = 16
-                d.Visible = true
-                d.Text = "UI Error: " .. tostring(err)
-                return d
-            end)
-        end
-    end
-
-    uiSafeRun(function()
     local httpService = game:GetService("HttpService")
 
     if not isfolder(folderName) then -- theme.json, lastconfig.json, configs
@@ -6402,9 +6337,6 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     backtrack:AddDropdown("Character Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Backtracking%%Character Material"))
     backtrack:AddToggle("Clone Character", true, getCallback("Backtracking%%Clone Character"))
 
-    backtrack:AddColorPicker("Visible Cham Color", Color3.fromRGB(84,154,255), getCallback("Backtracking%%Visible Cham Color"))
-    backtrack:AddColorPicker("Hidden Cham Color", Color3.fromRGB(150,150,150), getCallback("Backtracking%%Hidden Cham Color"))
-
     gunmods:AddToggle("No Recoil", false, getCallback("Gun Mods%%No Recoil"))
     gunmods:AddToggle("No Spread", false, getCallback("Gun Mods%%No Spread"))
     gunmods:AddToggle("Small Crosshair", false, getCallback("Gun Mods%%Small Crosshair"))
@@ -6581,7 +6513,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     sounds:AddDropdown("Footstep Sound", "None", soundFileList, getCallback("Sounds%%Footstep Sound"))
 
     tweaks:AddToggle("Custom Kill Notification", false, getCallback("Tweaks%%Custom Kill Notification"))
-    tweaks:AddTextBox("Notification Text", "Furry Killed!", getCallback("Tweaks%%Notification Text"))
+    tweaks:AddTextBox("Notification Text", "Chud Gone!", getCallback("Tweaks%%Notification Text"))
     tweaks:AddButton("Unlock All Attachments", getCallback("Tweaks%%Unlock All Attachments"))
     tweaks:AddButton("Unlock All Knives", getCallback("Tweaks%%Unlock All Knives"))
     tweaks:AddButton("Unlock All Camos", getCallback("Tweaks%%Unlock All Camos"))
