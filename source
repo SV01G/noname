@@ -6337,9 +6337,6 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     backtrack:AddDropdown("Character Material", "ForceField", {"ForceField", "SmoothPlastic", "Glass"}, getCallback("Backtracking%%Character Material"))
     backtrack:AddToggle("Clone Character", true, getCallback("Backtracking%%Clone Character"))
 
-    backtrack:AddColorPicker("Visible Cham Color", Color3.fromRGB(84,154,255), getCallback("Backtracking%%Visible Cham Color"))
-    backtrack:AddColorPicker("Hidden Cham Color", Color3.fromRGB(150,150,150), getCallback("Backtracking%%Hidden Cham Color"))
-
     gunmods:AddToggle("No Recoil", false, getCallback("Gun Mods%%No Recoil"))
     gunmods:AddToggle("No Spread", false, getCallback("Gun Mods%%No Spread"))
     gunmods:AddToggle("Small Crosshair", false, getCallback("Gun Mods%%Small Crosshair"))
