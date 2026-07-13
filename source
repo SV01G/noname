@@ -5821,15 +5821,17 @@ LPH_JIT_MAX(function() -- Main Cheat
                     local entryThirdPersonObject = entry._thirdPersonObject
                     local character = entryThirdPersonObject and entryThirdPersonObject._character
 
-                    if entry._isEnemy and character then
+
+                    if entry._isEnemy then
                         local clone
 
-                        if wapus:GetValue("Backtracking", "Clone Character") then
+                        -- determine a root CFrame to position proxies when character data is missing
+                        local rootCFrame = (entryThirdPersonObject and entryThirdPersonObject._rootPart and entryThirdPersonObject._rootPart.CFrame) or (entry._receivedPosition and CFrame.new(entry._receivedPosition)) or CFrame.new()
+
+                        if wapus:GetValue("Backtracking", "Clone Character") and character then
                             clone = character:Clone()
 
-                            -- If the cloned character has no BasePart descendants (some character
-                            -- structures may not clone usable parts), create a simple visible
-                            -- proxy model so the backtrack is actually visible and hittable.
+                            -- If the cloned character has no BasePart descendants, fall back to a proxy
                             local hasBase = false
                             for _, d in ipairs(clone:GetDescendants()) do
                                 if d:IsA("BasePart") then
@@ -5840,7 +5842,6 @@ LPH_JIT_MAX(function() -- Main Cheat
 
                             if not hasBase then
                                 local proxy = Instance.new("Model")
-                                local rootCFrame = entryThirdPersonObject._rootPart and entryThirdPersonObject._rootPart.CFrame or CFrame.new()
 
                                 local head = Instance.new("Part")
                                 head.Name = "Head"
@@ -5862,13 +5863,23 @@ LPH_JIT_MAX(function() -- Main Cheat
                                 clone = proxy
                             end
                         else
+                            -- create a simple proxy model at the reported position
                             clone = Instance.new("Model")
-                            local part = Instance.new("Part")
-                            part.CFrame = entryThirdPersonObject._rootPart.CFrame
-                            part.Size = Vector3.new(4, 5, 1)
-                            part.CanCollide = true
-                            part.Anchored = true
-                            part.Parent = clone
+                            local head = Instance.new("Part")
+                            head.Name = "Head"
+                            head.Size = Vector3.new(2, 1, 1)
+                            head.CFrame = rootCFrame * CFrame.new(0, 1.5, 0)
+                            head.Anchored = true
+                            head.CanCollide = true
+                            head.Parent = clone
+
+                            local torso = Instance.new("Part")
+                            torso.Name = "Torso"
+                            torso.Size = Vector3.new(2, 2, 1)
+                            torso.CFrame = rootCFrame
+                            torso.Anchored = true
+                            torso.CanCollide = true
+                            torso.Parent = clone
                         end
 
                         clone.Name = player.Name
