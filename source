@@ -6513,7 +6513,7 @@ LPH_NO_VIRTUALIZE(function() -- Make UI
     sounds:AddDropdown("Footstep Sound", "None", soundFileList, getCallback("Sounds%%Footstep Sound"))
 
     tweaks:AddToggle("Custom Kill Notification", false, getCallback("Tweaks%%Custom Kill Notification"))
-    tweaks:AddTextBox("Notification Text", "Chud Gone!", getCallback("Tweaks%%Notification Text"))
+    tweaks:AddTextBox("Notification Text", "Furry Killed!", getCallback("Tweaks%%Notification Text"))
     tweaks:AddButton("Unlock All Attachments", getCallback("Tweaks%%Unlock All Attachments"))
     tweaks:AddButton("Unlock All Knives", getCallback("Tweaks%%Unlock All Knives"))
     tweaks:AddButton("Unlock All Camos", getCallback("Tweaks%%Unlock All Camos"))
