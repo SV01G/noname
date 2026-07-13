@@ -5831,7 +5831,6 @@ LPH_JIT_MAX(function() -- Main Cheat
                         if wapus:GetValue("Backtracking", "Clone Character") and character then
                             clone = character:Clone()
 
-                            -- If the cloned character has no BasePart descendants, fall back to a proxy
                             local hasBase = false
                             for _, d in ipairs(clone:GetDescendants()) do
                                 if d:IsA("BasePart") then
@@ -5840,33 +5839,26 @@ LPH_JIT_MAX(function() -- Main Cheat
                                 end
                             end
 
-                            if not hasBase then
-                                local proxy = Instance.new("Model")
-
-                                -- create a simple full-body proxy: head, torso, arms, legs
-                                local parts = {}
-                                local function makePart(name, size, offset)
-                                    local p = Instance.new("Part")
-                                    p.Name = name
-                                    p.Size = size
-                                    p.CFrame = rootCFrame * CFrame.new(offset)
-                                    p.Anchored = true
-                                    p.CanCollide = true
-                                    p.Parent = proxy
-                                    return p
+                            if hasBase then
+                                -- Snapshot each part's CFrame from the live character
+                                for _, clonePart in ipairs(clone:GetDescendants()) do
+                                    if clonePart:IsA("BasePart") then
+                                        local livePart = character:FindFirstChild(clonePart.Name)
+                                        if livePart then
+                                            clonePart.CFrame = livePart.CFrame
+                                        end
+                                        clonePart.Anchored = true
+                                        clonePart.CanCollide = true
+                                    end
                                 end
 
-                                parts.Head = makePart("Head", Vector3.new(1.25, 1.25, 1.25), Vector3.new(0, 1.6, 0))
-                                parts.Torso = makePart("Torso", Vector3.new(2, 2.5, 1), Vector3.new(0, 0.25, 0))
-                                parts.LeftArm = makePart("LeftArm", Vector3.new(0.9, 2, 0.9), Vector3.new(-1.25, 0.5, 0))
-                                parts.RightArm = makePart("RightArm", Vector3.new(0.9, 2, 0.9), Vector3.new(1.25, 0.5, 0))
-                                parts.LeftLeg = makePart("LeftLeg", Vector3.new(0.9, 2.5, 0.9), Vector3.new(-0.45, -1.5, 0))
-                                parts.RightLeg = makePart("RightLeg", Vector3.new(0.9, 2.5, 0.9), Vector3.new(0.45, -1.5, 0))
-
-                                clone:Destroy()
-                                clone = proxy
-                            end
-                        else
+                                -- Remove joints so parts stay in their snapshotted positions
+                                for _, weld in ipairs(clone:GetDescendants()) do
+                                    if weld:IsA("Motor6D") or weld:IsA("Weld") or weld:IsA("WeldConstraint") then
+                                        weld:Destroy()
+                                    end
+                                end
+                            else
                             -- create a simple proxy model at the reported position
                             clone = Instance.new("Model")
                             -- create a full-body proxy model for non-clone fallback
