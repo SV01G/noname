@@ -1145,13 +1145,13 @@ do -- UI Library
     wapus = {
         toggleKeybind = "RightShift",
         theme = {
-            accent = Color3.fromRGB(127, 72, 163), -- Color3.fromRGB(23, 122, 179)
+            accent = Color3.fromRGB(84, 154, 255),
             text = Color3.fromRGB(255, 255, 255),
-            background = Color3.fromRGB(35, 35, 35),
-            lightbackground = Color3.fromRGB(50, 50, 50),
-            hidden = Color3.fromRGB(26, 26, 26),
-            hiddenText = Color3.fromRGB(200, 200, 200),
-            outline = Color3.fromRGB(0, 0, 0),
+            background = Color3.fromRGB(12, 22, 42),
+            lightbackground = Color3.fromRGB(24, 44, 76),
+            hidden = Color3.fromRGB(7, 14, 28),
+            hiddenText = Color3.fromRGB(210, 225, 255),
+            outline = Color3.fromRGB(40, 68, 112),
             --fontData = game:HttpGet("https://get.fontspace.co/download/font/g0P4/YzVlMTg1YTgwOGNhNGQyYjljZDFiNmI0NjMxNGY0YzgudHRm/EpilepsySans-g0P4.ttf") -- miss krampus
         },
         menus = {},
@@ -3194,7 +3194,7 @@ LPH_JIT_MAX(function() -- Main Cheat
                     return true
                 elseif part.Transparency == 1 then
                     return true
-                elseif part:IsDescendantOf(hitboxObjects) or part:IsDescendantOf(backtrackObjects) then
+                elseif part:IsDescendantOf(hitboxObjects) then
                     return true
                 else
                     return
@@ -5826,12 +5826,47 @@ LPH_JIT_MAX(function() -- Main Cheat
 
                         if wapus:GetValue("Backtracking", "Clone Character") then
                             clone = character:Clone()
+
+                            -- If the cloned character has no BasePart descendants (some character
+                            -- structures may not clone usable parts), create a simple visible
+                            -- proxy model so the backtrack is actually visible and hittable.
+                            local hasBase = false
+                            for _, d in ipairs(clone:GetDescendants()) do
+                                if d:IsA("BasePart") then
+                                    hasBase = true
+                                    break
+                                end
+                            end
+
+                            if not hasBase then
+                                local proxy = Instance.new("Model")
+                                local rootCFrame = entryThirdPersonObject._rootPart and entryThirdPersonObject._rootPart.CFrame or CFrame.new()
+
+                                local head = Instance.new("Part")
+                                head.Name = "Head"
+                                head.Size = Vector3.new(2, 1, 1)
+                                head.CFrame = rootCFrame * CFrame.new(0, 1.5, 0)
+                                head.Anchored = true
+                                head.CanCollide = true
+                                head.Parent = proxy
+
+                                local torso = Instance.new("Part")
+                                torso.Name = "Torso"
+                                torso.Size = Vector3.new(2, 2, 1)
+                                torso.CFrame = rootCFrame
+                                torso.Anchored = true
+                                torso.CanCollide = true
+                                torso.Parent = proxy
+
+                                clone:Destroy()
+                                clone = proxy
+                            end
                         else
                             clone = Instance.new("Model")
                             local part = Instance.new("Part")
                             part.CFrame = entryThirdPersonObject._rootPart.CFrame
                             part.Size = Vector3.new(4, 5, 1)
-                            part.CanCollide = false
+                            part.CanCollide = true
                             part.Anchored = true
                             part.Parent = clone
                         end
@@ -5841,13 +5876,13 @@ LPH_JIT_MAX(function() -- Main Cheat
                             Material = Enum.Material[wapus:GetValue("Backtracking", "Character Material")],
                             Transparency = wapus:GetValue("Backtracking", "Character Transparency") * 0.01,
                             Color = wapus:GetValue("Backtracking", "Character Color"),
-                            CanCollide = false
+                            CanCollide = true
                         }
 
                         for _, descendant in ipairs(clone:GetDescendants()) do
                             if descendant:IsA("BasePart") then
                                 descendant.Anchored = true
-                                descendant.CanCollide = false
+                                descendant.CanCollide = true
                             end
                         end
 
