@@ -6011,46 +6011,6 @@ LPH_JIT_MAX(function() -- Main Cheat
                 cross4.Color = rainbow
             end
         end
-
-        -- Color backtrack proxies/chams differently when occluded vs visible
-        if backtrackObjects and backtrackObjects.Parent and #backtrackObjects:GetChildren() > 0 and wapus:GetValue("Backtracking", "Enabled") then
-            local visibleColor = wapus:GetValue("Backtracking", "Visible Cham Color")
-            local hiddenColor = wapus:GetValue("Backtracking", "Hidden Cham Color")
-
-            local params = RaycastParams.new()
-            params.IgnoreWater = true
-            params.FilterType = Enum.RaycastFilterType.Blacklist
-            params.FilterDescendantsInstances = {ignore, hitboxObjects}
-
-            for _, model in ipairs(backtrackObjects:GetChildren()) do
-                if model and model:IsA("Model") then
-                    -- pick a representative part for visibility testing
-                    local rep
-                    rep = model:FindFirstChild("Torso") or model:FindFirstChild("HumanoidRootPart") or model:FindFirstChildWhichIsA("BasePart")
-
-                    for _, part in ipairs(model:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            local isVisible = false
-                            if rep then
-                                local origin = camera.CFrame.Position
-                                local dir = part.Position - origin
-                                local res = workspace:Raycast(origin, dir, params)
-
-                                if not res then
-                                    isVisible = true
-                                else
-                                    if res.Instance and res.Instance:IsDescendantOf(model) then
-                                        isVisible = true
-                                    end
-                                end
-                            end
-
-                            part.Color = (isVisible and visibleColor) or hiddenColor
-                        end
-                    end
-                end
-            end
-        end
     end)))
 
     unloadMain = function() -- this is not finished lol
